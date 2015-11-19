@@ -124,17 +124,69 @@ Install vnc4server and the xfce4 desktop environment (there are issues with GNOM
     sudo apt-get install vnc4server
     sudo apt-get install xfce4 xfce4-goodies
 
-Modify the file `/home/user1/.vnc/xstartup`:
+Modify the file:
 
     sudo nano /home/user1/.vnc/xstartup
-    ##full file below
+
+Full file below:
+
     #!/bin/sh
     unset SESSION_MANAGER
     unset DBUS_SESSION_BUS_ADDRESS
     startxfce4 &
-    
+ 
     [ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
     [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
     xsetroot -solid grey
     vncconfig -iconic &
-    ####
+    
+Now launch a vnc server using, and note the name and number (e.g., `computer-name:1`) given to it:
+
+    vnc4server -geometry 1920x1080 -depth 24
+    
+To stop the server `computer-name:1`:
+
+    vnc4server -kill :1
+
+#### Install R and supporting programs
+
+##### *R (current version)*
+
+Install main packages:
+
+    sudo apt-get update
+    sudo apt-get install r-base r-base-dev
+    sudo apt-get install libatlas3-base
+    
+By default (on Debian Jessie) R 3.1.1 is installed. To set up backports for Jessie to allow for updating R, add an appropriate mirror [source](https://cran.r-project.org/mirrors.html) to `/etc/apt/sources.list`:
+
+    deb http://archive.linux.duke.edu/cran/bin/linux/debian jessie-cran3/
+
+We also need to add a PUBKEY for the R mirror we chose:
+
+    gpg --keyserver pgpkeys.mit.edu --recv-key 06F90DE5381BA480
+    gpg -a --export 06F90DE5381BA480 | sudo apt-key add -
+    
+Now we can upgrade R to the newest version (currently 3.2.2):
+
+    sudo apt-get update
+    sudo apt-get upgrade
+    
+To install R packages globally, we need to open R with root privileges (`sudo R`). Instead of doing this every time, we can add users to the group `staff`, which then allows those users to install to the global R library folder (`/usr/local/lib/R/site-library`) by default, e.g.:
+
+    su root
+    adduser user1 staff
+    su user1
+    R
+    > install.packages('raster')
+
+##### *RStudio Server*
+
+Download and install gdebi and RStudio Server 64-bit, and start it:
+
+    sudo apt-get install gdebi-core
+    wget https://download2.rstudio.org/rstudio-server-0.99.489-amd64.deb
+    sudo gdebi rstudio-server-0.99.489-amd64.deb
+    sudo rstudio-server start
+
+Server can be accessed [here](http://basille-flrec.ad.ufl.edu:8787/auth-sign-in).
