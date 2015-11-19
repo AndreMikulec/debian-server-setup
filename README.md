@@ -178,7 +178,7 @@ To install R packages globally, we need to open R with root privileges (`sudo R`
     adduser user1 staff
     su user1
     R
-    > install.packages('raster')
+    > install.packages('shiny')
 
 ##### *RStudio Server*
 
@@ -190,3 +190,24 @@ Download and install gdebi and RStudio Server 64-bit, and start it:
     sudo rstudio-server start
 
 Server can be accessed [here](http://basille-flrec.ad.ufl.edu:8787/auth-sign-in).
+
+##### *Shiny server*
+
+Before istalling the Shiny server in Debian 8, a prerequiste package (libssl0.9.8) needs to be installed:
+
+    wget http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+    sudo dpkg -i libssl0.9.8_0.9.8o-4squeeze14_amd64.deb
+
+Now install the Shiny server:
+
+    wget https://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.4.0.756-amd64.deb
+    sudo gdebi shiny-server-1.4.0.756-amd64.deb
+
+To share an app on the server, just upload it's project folder (containing `server.r` and `ui.r` to server folder, e.g.:
+
+    sudo cp -R /usr/local/lib/R/site-library/shiny/examples/04_mpg /srv/shiny-server/
+
+Apps are shared at http://basille-flrec.ad.ufl.edu:3838/app_name, example [here](http://basille-flrec.ad.ufl.edu:3838/04_mpg/)
+
+    
+
