@@ -207,7 +207,9 @@ To share an app on the server, just upload it's project folder (containing `serv
 
     sudo cp -R /usr/local/lib/R/site-library/shiny/examples/04_mpg /srv/shiny-server/
 
-Apps are shared at http://basille-flrec.ad.ufl.edu:3838/app_name, example [here](http://basille-flrec.ad.ufl.edu:3838/04_mpg/)
+Apps are shared at `http://basille-flrec.ad.ufl.edu:3838/app_name`.
+
+##### 
 
     
 
