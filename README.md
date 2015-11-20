@@ -258,11 +258,11 @@ Several packages are pre-requisites for GitLab, install them:
 
     sudo apt-get install curl openssh-server ca-certificates postfix
     
-Postfix is an email program which requires configuration (see [here](http://www.postfix.org/BASIC_CONFIGURATION_README.html) and [here](http://michaelholley.us/2014/10/01/install-gitlab/). To reconfigure postfix, use the command:
+Postfix is an email program which requires configuration (see [here](http://www.postfix.org/BASIC_CONFIGURATION_README.html) and [here](http://michaelholley.us/2014/10/01/install-gitlab/)). To reconfigure postfix, use the command:
 
     dpkg-reconfigure postfix
 
-And the reload it:
+And then reload it:
 
     sudo /etc/init.d/postfix reload
     
@@ -284,3 +284,10 @@ Now enable the site and restart apache2:
     sudo service apache2 restart
     
 The gitlab site can be accessed [here](http://basille-flrec.ad.ufl.edu:4554//users/sign_in).
+
+#### Other stuff
+
+Add the Debian Jessie backports repository to `/etc/apt/sources.list`
+
+    deb http://http.debian.net/debian jessie-backports main
+
