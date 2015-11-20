@@ -96,7 +96,7 @@ Now we can log into `psql` as `user1` using the following command:
 
 Databases can then be imported using the pgAdmin3 restore tool (Tools->Restore). Make sure prior to restore that all roles who have privileges on the restored databases already exist on the server. You could also restore the database using [psql](http://www.postgresql.org/docs/9.4/static/backup-dump.html).
 
-##### *Set up automatic backup to network for server databases*
+##### *Set up automatic backup to network folder for server databases*
 
 First create a new folder in the lab network folder:
 
@@ -106,15 +106,15 @@ Now open `cron`, a task scheduling file, using the following command:
 
     crontab -e
 
-Add the following lines to the file, creating a backup for each database as well as the entire server, and deleting old files in the backup folder:
+Add the following lines to the file, which create a backup for two databases as well as the entire server, and delete old files in the backup folder (all performed daily):
 
     #backup databases, with dates in filenames
-    pg_dump wood_stork_tracking | gzip > /mnt/basille_lab/db_backups/wood_stork_tracking_`date +'%Y_%m_%d'`.gz
-    pg_dump keys_gps_tracking | gzip > /mnt/basille_lab/db_backups/keys_gps_tracking_`date +'%Y_%m_%d'`.gz
+    10 23 * * * pg_dump wood_stork_tracking | gzip > /mnt/basille_lab/db_backups/wood_stork_tracking_`date +'%Y_%m_%d'`.gz
+    20 23 * * * pg_dump keys_gps_tracking | gzip > /mnt/basille_lab/db_backups/keys_gps_tracking_`date +'%Y_%m_%d'`.gz
     #backup full database server
-    pg_dumpall | gzip > /mnt/basille_lab/db_backups/fullDB_`date +'%Y_%m'`.gz
+    30 23 * * * pg_dumpall | gzip > /mnt/basille_lab/db_backups/fullDB_`date +'%Y_%m'`.gz
     #delete files older than 60 days
-    find /mnt/basille_lab/db_backups -type f -mtime +60 -delete
+    0 23 * * * find /mnt/basille_lab/db_backups -type f -mtime +60 -delete
 
 ##### *PostgreSQL setup and maintenence*
 
@@ -232,7 +232,5 @@ Install necessary packages for the R package `devtools`:
     sudo apt-get install libssl-dev
     sudo apt-get install libxml2-dev
     sudo apt-get libcurl4-openssl-dev
-    
 
-    
-
+#### Install git and related software
