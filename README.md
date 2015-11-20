@@ -1,4 +1,4 @@
-# debian-sever-setup
+# debian-server-setup
 
 #### Operating system (Debian 8 Jessie) install
 
