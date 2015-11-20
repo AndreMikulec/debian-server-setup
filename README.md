@@ -40,7 +40,7 @@ Change the line `#PermitRootLogin yes` to `PermitRootLogin no`, and then restart
 
 #### Set up networking
 
-Install necessary packages for mounting network folders:
+Install necessary packages for mounting (Windows) network folders:
 
     sudo apt-get install samba
     sudo apt-get install smbclient
@@ -150,11 +150,11 @@ Full file below:
     xsetroot -solid grey
     vncconfig -iconic &
     
-Now launch a vnc server using, and note the name and number (e.g., `computer-name:1`) given to it:
+Now launch a vnc server, and note the name and number (e.g., `computer-name:1`) given to it:
 
     vnc4server -geometry 1920x1080 -depth 24
     
-To stop the server `computer-name:1`:
+To stop the server `computer-name:1`, use:
 
     vnc4server -kill :1
 
@@ -177,7 +177,7 @@ We also need to add a PUBKEY for the R mirror we chose:
     gpg --keyserver pgpkeys.mit.edu --recv-key 06F90DE5381BA480
     gpg -a --export 06F90DE5381BA480 | sudo apt-key add -
     
-Now we can upgrade R to the newest version (as of Nov 2015, 3.2.2):
+Now we can upgrade R (and any other system packages) to the newest version (as of Nov 2015, 3.2.2), using:
 
     sudo apt-get update
     sudo apt-get upgrade
@@ -213,13 +213,13 @@ Now install the Shiny server:
     wget https://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.4.0.756-amd64.deb
     sudo gdebi shiny-server-1.4.0.756-amd64.deb
 
-To share an app on the server, just upload it's project folder (containing `server.r` and `ui.r` to server folder, e.g.:
+To share an app on the server, just copy it's project folder (containing `server.r` and `ui.r` to server folder, e.g.:
 
     sudo cp -R /usr/local/lib/R/site-library/shiny/examples/04_mpg /srv/shiny-server/
 
 Apps are shared at `http://basille-flrec.ad.ufl.edu:3838/app_name`.
 
-##### *System packages necessary for R packages*
+##### *Other system packages necessary for R packages*
 
 Install gdal, and necessary packages for using the R package `rgdal`:
 
