@@ -213,7 +213,7 @@ Now install the Shiny server:
     wget https://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.4.0.756-amd64.deb
     sudo gdebi shiny-server-1.4.0.756-amd64.deb
 
-To share an app on the server, just copy it's project folder (containing `server.r` and `ui.r` to server folder, e.g.:
+To share an app on the server, just copy it's project folder (containing `server.r` and `ui.r`) to server folder, e.g.:
 
     sudo cp -R /usr/local/lib/R/site-library/shiny/examples/04_mpg /srv/shiny-server/
 
