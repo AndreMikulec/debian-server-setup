@@ -231,6 +231,56 @@ Install necessary packages for the R package `devtools`:
 
     sudo apt-get install libssl-dev
     sudo apt-get install libxml2-dev
-    sudo apt-get libcurl4-openssl-dev
+    sudo apt-get install libcurl4-openssl-dev
 
 #### Install git and related software
+
+##### *Base git*
+
+    sudo apt-get install git
+
+Set user name and email:
+
+    git config --global user.name "first last"
+    git config --global user.email name@example.com
+    
+Set default text editor (nano for now):
+
+    git config --global core.editor nano 
+
+You can check existing settings with:
+
+    git config --list
+    
+##### *GitLab*
+
+Several packages are pre-requisites for GitLab, install them:
+
+    sudo apt-get install curl openssh-server ca-certificates postfix
+    
+Postfix is an email program which requires configuration (see [here](http://www.postfix.org/BASIC_CONFIGURATION_README.html) and [here](http://michaelholley.us/2014/10/01/install-gitlab/). To reconfigure postfix, use the command:
+
+    dpkg-reconfigure postfix
+
+And the reload it:
+
+    sudo /etc/init.d/postfix reload
+    
+Now install and reconfigure gitlab:
+
+    curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+    sudo apt-get install gitlab-ce
+    sudo gitlab-ctl reconfigure
+    
+To run on an Apache2 webserver, some configuration is needed. The instructions from [here](https://forum.gitlab.com/t/solved-setting-up-gitlab-on-ubuntu-14-04-with-apache2-without-owning-a-domain-name/679/8) were followed. This invloved setting up a new vhost file `/etc/apache2/sites-available/gitlab-8.0-apache2.4.conf`, taken from [here](https://gitlab.com/gitlab-org/gitlab-recipes/blob/apache-old/web-server/apache/gitlab-8.0-apache2.4.conf). After this, the file `/etc/apache2/ports.conf` was modified, adding the line `Listen 4554` (the gitlab port). 
+
+After this, run the following to enable apache2 modules necessary:
+
+    sudo a2enmod proxy proxy_http rewrite
+
+Now enable the site and restart apache2:
+
+    sudo a2ensite gitlab-8.0-apache2.4.conf
+    sudo service apache2 restart
+    
+The gitlab site can be accessed [here](http://basille-flrec.ad.ufl.edu:4554//users/sign_in).
