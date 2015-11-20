@@ -4,7 +4,7 @@
 
 Steps followed to install Debian 8 Jessie (stable) and base software on a server. Workstation is a Puget Systems Obsidian, with 32 GB RAM, 500 GB SSD, and Intel Xeon 3.6 GHz Quad-core.
 
-A [net install .iso](https://www.debian.org/CD/netinst/) of Debain was downloaded for amd64, and put on a USB key using [Linux Live USB creator](http://www.linuxliveusb.com/). A graphical install was used. Root password, and user name and password are entered. Default settings were used in the install, with the following exceptions:
+A [net install .iso](https://www.debian.org/CD/netinst/) of Debain was downloaded for amd64, and put on a USB key using [Linux Live USB creator](http://www.linuxliveusb.com/). A graphical install was used. A root password, and a new user name and password are entered. Default settings were used in the install, with the following exceptions:
 * Guided partitioning, with Logical volume management enabled
 * Software selection: GNOME desktop env., web server, print server, SSH server, standard system utilities
 * Installed GRUB boot loader to Master boot record (MBR)
@@ -68,23 +68,33 @@ To load network folder for the lab on computer startup, add the following line t
 
 #### Install PostgreSQL and related software
 
+##### *Install PostgreSQL 9.4*
+
 Install the base server, client, and development files - more information can be found [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-9-4-on-debian-8):
 
     sudo apt-get update
     sudo apt-get install postgresql-9.4 postgresql-client-9.4 postgresql-server-dev-9.4
 
-The install creates a new system user `postgres`. This user can create additional database users (roles):
+The install creates a new system user `postgres`. This user can create additional database users (roles), using `createuser` and answering the questions that follow:
 
     su root
     su postgres
     createuser --interactive
+    Enter name of role to add: user1
+    Shall the new role be a superuser? (y/n) y
+    Shall the new role be allowed to create databases? (y/n) y
+    Shall the new role be allowed to create more new roles? (y/n) y
+    
+Now we can log into `psql` as `user1` using the following command:
 
-Install PostGIS and pgAdmin3:
+    psql -d database_name
+
+##### *Install PostGIS and pgAdmin3*
 
     sudo apt-get install pgadmin3
     sudo apt-get install postgis
 
-Databases can then be imported using the pgAdmin3 restore tool (Tools->Restore). Make sure prior to restore that all roles who have privileges on the restored databases already exist on the server.
+Databases can then be imported using the pgAdmin3 restore tool (Tools->Restore). Make sure prior to restore that all roles who have privileges on the restored databases already exist on the server. You could also restore the database using [psql](http://www.postgresql.org/docs/9.4/static/backup-dump.html).
 
 ##### *Set up automatic backup to network for server databases*
 
@@ -158,7 +168,7 @@ Install main packages:
     sudo apt-get install r-base r-base-dev
     sudo apt-get install libatlas3-base
     
-By default (on Debian Jessie) R 3.1.1 is installed. To set up backports for Jessie to allow for updating R, add an appropriate mirror [source](https://cran.r-project.org/mirrors.html) to `/etc/apt/sources.list`:
+By default (on Debian Jessie), R 3.1.1 is installed. To set up backports for Jessie to allow for updating R, add an appropriate mirror [source](https://cran.r-project.org/mirrors.html) to `/etc/apt/sources.list`:
 
     deb http://archive.linux.duke.edu/cran/bin/linux/debian jessie-cran3/
 
@@ -167,7 +177,7 @@ We also need to add a PUBKEY for the R mirror we chose:
     gpg --keyserver pgpkeys.mit.edu --recv-key 06F90DE5381BA480
     gpg -a --export 06F90DE5381BA480 | sudo apt-key add -
     
-Now we can upgrade R to the newest version (currently 3.2.2):
+Now we can upgrade R to the newest version (as of Nov 2015, 3.2.2):
 
     sudo apt-get update
     sudo apt-get upgrade
@@ -209,7 +219,20 @@ To share an app on the server, just upload it's project folder (containing `serv
 
 Apps are shared at `http://basille-flrec.ad.ufl.edu:3838/app_name`.
 
-##### 
+##### *System packages necessary for R packages*
+
+Install gdal, and necessary packages for using the R package `rgdal`:
+
+    sudo apt-get install gdal-bin
+    sudo apt-get install libproj-dev
+    sudo apt-get install libgdal-dev
+    
+Install necessary packages for the R package `devtools`:
+
+    sudo apt-get install libssl-dev
+    sudo apt-get install libxml2-dev
+    sudo apt-get libcurl4-openssl-dev
+    
 
     
 
