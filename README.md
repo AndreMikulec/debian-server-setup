@@ -291,3 +291,32 @@ Add the Debian Jessie backports repository to `/etc/apt/sources.list`
 
     deb http://http.debian.net/debian jessie-backports main
 
+##### *Apache2 configuration*
+
+Change document root in for main website:
+
+    sudo nano /etc/apache2/sites-enabled/000-default.conf
+    
+Change to `DocumentRoot /srv/www/html`. Then allow use of authentication (.htaccess) files in this new location in `/srv`:
+
+    sudo nano /etc/apache2/apache2.conf
+    
+Add the following lines:
+
+    <Directory /srv/>
+              Options Indexes FollowSymLinks
+              AllowOverride All
+              Require all granted
+    </Directory>
+
+Give ownership of the password folder to user `www-data`:
+
+    sudo chown -R www-data:www-data /srv/.htpasswd
+
+Finally, restart the server:
+
+    sudo service apache2 restart
+
+
+
+
