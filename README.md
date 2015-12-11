@@ -1,5 +1,30 @@
 # debian-server-setup
 
+# Table of Contents
+
+- [Operating system install](#os)
+- [User setup and management](#user)
+- [Set up networking](#net)
+- [Install PostgreSQL and related software](#psql)
+	- [Install PostgreSQL 9.4](#psql1)
+	- [Install PostGIS and pgAdmin3](#psql2)
+	- [Set up automatic backup to network folder for server databases](#psql3)
+	- [PostgreSQL setup and maintenence](#psql4)
+- [Virtual network computing (remote desktop)](#vnc)
+- [Install R and supporting programs](#r)
+	- [R (current version)](#r1)
+	- [RStudio Server](#r2)
+	- [Shiny server](#r3)
+	- [Other system packages necessary for R packages](#r4)
+- [Install git and related software](#git)
+	- [Install git](#git1)
+	- [Install gitlab](#git2)
+- [Other stuff](#other)
+	- [Apache2 configuration](#apache)
+
+ 
+
+<a name="os"></a>
 #### Operating system (Debian 8 Jessie) install
 
 Steps followed to install Debian 8 Jessie (stable) and base software on a server. Workstation is a Puget Systems Obsidian, with 32 GB RAM, 500 GB SSD, and Intel Xeon 3.6 GHz Quad-core.
@@ -9,6 +34,7 @@ A [net install .iso](https://www.debian.org/CD/netinst/) of Debain was downloade
 * Software selection: GNOME desktop env., web server, print server, SSH server, standard system utilities
 * Installed GRUB boot loader to Master boot record (MBR)
 
+<a name="user"></a>
 #### User setup and management
 
 After logging into Debian for the first time, start up a terminal. First we need to give `sudo` (root privileges) to our user we created in the install process (e.g., `user1`):
@@ -38,6 +64,7 @@ Change the line `#PermitRootLogin yes` to `PermitRootLogin no`, and then restart
 
     systemctl restart ssh
 
+<a name="net"></a>
 #### Set up networking
 
 Install necessary packages for mounting (Windows) network folders:
@@ -60,14 +87,16 @@ Since network folders require authentication, create a credentials text file wit
 Network folders can be mounted using the following commands:
 
     sudo mount.cifs //ifs-flrec-1mps/data/Users/dbucklin /mnt/dbucklin -o credentials=/path/to/file,uid=user1,gid=user1
-    sudo mount.cifs //ifs-flrec-1mps/data/Groups/basille_lab /mnt/basille_lab -o credentials=credentials=/path/to/file,uid=user1,gid=user1
+    sudo mount.cifs //ifs-flrec-1mps/data/Groups/basille_lab /mnt/basille_lab -o credentials=/path/to/file,uid=user1,gid=user1
 
 To load network folder for the lab on computer startup, add the following line to `/etc/fstab`:
 
     //ifs-flrec-1mps/data/Groups/basille_lab /mnt/basille_lab cifs credentials=/path/to/file,uid=user1 0 0
 
+<a name="psql"></a>
 #### Install PostgreSQL and related software
 
+<a name="psql1"></a>
 ##### *Install PostgreSQL 9.4*
 
 Install the base server, client, and development files - more information can be found [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-9-4-on-debian-8):
@@ -89,6 +118,7 @@ Now we can log into `psql` as `user1` using the following command:
 
     psql -d database_name
 
+<a name="psql2"></a>
 ##### *Install PostGIS and pgAdmin3*
 
     sudo apt-get install pgadmin3
@@ -96,6 +126,7 @@ Now we can log into `psql` as `user1` using the following command:
 
 Databases can then be imported using the pgAdmin3 restore tool (Tools->Restore). Make sure prior to restore that all roles who have privileges on the restored databases already exist on the server. You could also restore the database using [psql](http://www.postgresql.org/docs/9.4/static/backup-dump.html).
 
+<a name="psql3"></a>
 ##### *Set up automatic backup to network folder for server databases*
 
 First create a new folder in the lab network folder:
@@ -116,6 +147,7 @@ Add the following lines to the file, which create a backup for two databases as 
     #delete files older than 60 days
     0 23 * * * find /mnt/basille_lab/db_backups -type f -mtime +60 -delete
 
+<a name="psql4"></a>
 ##### *PostgreSQL setup and maintenence*
 
 The main settings for the Postgresql server can be altered by editing `postgresql.conf`, and connection settings in `pg_hba.conf`:
@@ -127,6 +159,7 @@ Following changes, restart the server using:
 
     sudo pg_ctlcluster 9.4 main [status][reload][restart][start][stop]
 
+<a name="vnc"></a>
 #### Virtual network computing (remote desktop)
 
 Install vnc4server and the xfce4 desktop environment (there are issues with GNOME and Debian 8 on VNC):
@@ -158,8 +191,10 @@ To stop the server `computer-name:1`, use:
 
     vnc4server -kill :1
 
+<a name="r"></a>
 #### Install R and supporting programs
 
+<a name="r1"></a>
 ##### *R (current version)*
 
 Install main packages:
@@ -190,6 +225,7 @@ To install R packages globally, we need to open R with root privileges (`sudo R`
     R
     > install.packages('shiny')
 
+<a name="r2"></a>
 ##### *RStudio Server*
 
 Download and install gdebi and RStudio Server 64-bit, and start it:
@@ -201,6 +237,7 @@ Download and install gdebi and RStudio Server 64-bit, and start it:
 
 Server can be accessed [here](http://basille-flrec.ad.ufl.edu:8787/auth-sign-in).
 
+<a name="r3"></a>
 ##### *Shiny server*
 
 Before istalling the Shiny server in Debian 8, a prerequiste package (libssl0.9.8) needs to be installed:
@@ -237,7 +274,8 @@ To give the shiny user full ownership of a certain app folder:
     cd /srv/shiny-server/shinyapp/
     sudo chown shiny:shiny-apps .
 
-##### *Other system packages necessary for R packages*
+<a name="r4"></a>
+##### *Other system package prerequisites for R packages*
 
 Install gdal, and necessary packages for using the R package `rgdal`:
 
@@ -251,8 +289,10 @@ Install necessary packages for the R package `devtools`:
     sudo apt-get install libxml2-dev
     sudo apt-get install libcurl4-openssl-dev
 
+<a name="git"></a>
 #### Install git and related software
 
+<a name="git1"></a>
 ##### *Base git*
 
     sudo apt-get install git
@@ -269,7 +309,8 @@ Set default text editor (nano for now):
 You can check existing settings with:
 
     git config --list
-    
+
+<a name="git2"></a>
 ##### *GitLab*
 
 Several packages are pre-requisites for GitLab, install them:
@@ -303,12 +344,14 @@ Now enable the site and restart apache2:
     
 The gitlab site can be accessed [here](http://basille-flrec.ad.ufl.edu:4554//users/sign_in).
 
+<a name="other"></a>
 #### Other stuff
 
 Add the Debian Jessie backports repository to `/etc/apt/sources.list`
 
     deb http://http.debian.net/debian jessie-backports main
 
+<a name="apache"></a>
 ##### *Apache2 configuration*
 
 Change document root in for main website:
@@ -334,7 +377,5 @@ Give ownership of the password folder to user `www-data`:
 Finally, restart the server:
 
     sudo service apache2 restart
-
-
 
 
