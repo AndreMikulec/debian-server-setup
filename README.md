@@ -217,7 +217,25 @@ To share an app on the server, just copy it's project folder (containing `server
 
     sudo cp -R /usr/local/lib/R/site-library/shiny/examples/04_mpg /srv/shiny-server/
 
-Apps are shared at `http://basille-flrec.ad.ufl.edu:3838/app_name`.
+Apps are shared at `http://basille-flrec.ad.ufl.edu:3838/app_name` by default.
+
+To allow shiny apps to upload/download files to the app folder, create a shiny-apps group and add the shiny user (and any other users) to it:
+
+    sudo groupadd shiny-apps
+    sudo usermod -aG shiny-apps user1
+    sudo usermod -aG shiny-apps shiny
+
+Then modify the permissions in the main shiny folder:
+
+    cd /srv/shiny-server
+    sudo chown -R user1:shiny-apps .
+    sudo chmod g+w .
+    sudo chmod g+s .
+
+To give the shiny user full ownership of a certain app folder:
+
+    cd /srv/shiny-server/shinyapp/
+    sudo chown shiny:shiny-apps .
 
 ##### *Other system packages necessary for R packages*
 
