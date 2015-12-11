@@ -1,6 +1,6 @@
 # debian-server-setup
 
-# Table of Contents
+### Table of Contents
 
 - [Operating system install](#os)
 - [User setup and management](#user)
