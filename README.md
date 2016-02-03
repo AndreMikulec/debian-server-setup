@@ -256,6 +256,10 @@ To share an app on the server, just copy it's project folder (containing `server
 
 Apps are shared at `http://basille-flrec.ad.ufl.edu:3838/app_name` by default.
 
+To edit configuration of shiny server, edit file:
+
+    sudo nano /etc/shiny-server/shiny-server.conf
+
 To allow shiny apps to upload/download files to the app folder, create a shiny-apps group and add the shiny user (and any other users) to it:
 
     sudo groupadd shiny-apps
