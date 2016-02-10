@@ -10,6 +10,7 @@
 	- [Install PostGIS and pgAdmin3](#psql2)
 	- [Set up automatic backup to network folder for server databases](#psql3)
 	- [PostgreSQL setup and maintenence](#psql4)
+	- [Upgrading PostgreSQL](#psql5)
 - [Virtual network computing (remote desktop)](#vnc)
 - [Install R and supporting programs](#r)
 	- [R (current version)](#r1)
@@ -21,8 +22,6 @@
 	- [Install gitlab](#git2)
 - [Other stuff](#other)
 	- [Apache2 configuration](#apache)
-
- 
 
 <a name="os"></a>
 #### Operating system (Debian 8 Jessie) install
@@ -159,6 +158,26 @@ Following changes, restart the server using:
 
     sudo pg_ctlcluster 9.4 main [status][reload][restart][start][stop]
 
+<a name="psql5"></a>
+##### *Upgrading PostgreSQL*
+
+To upgrade a major version (e.g., 9.4 -> 9.5), first install the new binaries:
+
+    sudo apt_get update && sudo apt_get upgrade postgresql
+    sudo apt_get update && sudo apt_get upgrade postgis
+
+Drop the newly installed cluster:
+
+    sudo pg_dropcluster 9.5 main
+    
+Run the upgrade utility - make sure to note any restore errors during the process:
+
+    sudo pg_upgradecluster -v 9.5 9.4 main
+    
+The new cluster (9.5) will now run on port 5432, with the old cluster on port 5433. Once you are sure that the new cluster is functioning normally, drop the old cluster:
+
+    sudo pg_dropcluster --stop  9.4 main
+    
 <a name="vnc"></a>
 #### Virtual network computing (remote desktop)
 
