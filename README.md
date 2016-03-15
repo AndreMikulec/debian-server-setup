@@ -157,6 +157,10 @@ The main settings for the Postgresql server can be altered by editing `postgresq
 Following changes, restart the server using:
 
     sudo pg_ctlcluster 9.4 main [status][reload][restart][start][stop]
+    
+To view log files, log into `root` and go to directory:
+
+    cd /var/lib/postgresql/9.5/main/pg_log
 
 <a name="psql5"></a>
 ##### *Upgrading PostgreSQL*
