@@ -22,6 +22,7 @@
 	- [Install gitlab](#git2)
 - [Other stuff](#other)
 	- [Apache2 configuration](#apache)
+	- [nginx install and configuration](#nginx)
 
 <a name="os"></a>
 #### Operating system (Debian 8 Jessie) install
@@ -257,8 +258,27 @@ Download and install gdebi and RStudio Server 64-bit, and start it:
     wget https://download2.rstudio.org/rstudio-server-0.99.489-amd64.deb
     sudo gdebi rstudio-server-0.99.489-amd64.deb
     sudo rstudio-server start
+    
+To serve RStudio server from a custom path (instead of the port), using nginx - edit the nginx configuration `/etc/nginx/nginx.conf`, adding the following lines inside the http{}
 
-Server can be accessed [here](http://basille-flrec.ad.ufl.edu:8787/auth-sign-in).
+    map $http_upgrade $connection_upgrade {
+      default upgrade;
+      ''      close;
+    }
+    
+Then edit the nginx default site configuration, adding the following location:
+
+    location /rstudio/ {
+      rewrite ^/rstudio/(.*)$ /$1 break;
+      proxy_pass http://localhost:8787;
+      proxy_redirect http://localhost:8787/ $scheme://$host/rstudio/;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+      proxy_read_timeout 20d;
+    }
+
+Server can now be accessed [here](http://basille-flrec.ad.ufl.edu/rstudio).
 
 <a name="r3"></a>
 ##### *Shiny server*
@@ -405,4 +425,52 @@ Finally, restart the server:
 
     sudo service apache2 restart
 
+<a name="nginx"></a>
+##### *nginx install and configuration*
 
+Install nginx:
+
+    sudo apt-get install nginx
+
+To configure nginx to allow authentication on shiny server pages - more information [here](https://www.datascienceriot.com/add-authentication-to-shiny-server-with-nginx/kris/):
+
+Stop the shiny and nginx services:
+
+    sudo service nginx stop
+    sudo stop shiny-server
+    
+Edit the default configuration of nginx, adding a new location for shiny server:
+
+    sudo nano /etc/nginx/sites-available/default
+    
+File should have at least the following:
+
+    server {
+    listen 80; 
+    location / {
+      proxy_pass http://127.0.0.1:3838/;
+      proxy_redirect http://127.0.0.1:3838/ $scheme://$host/;
+      auth_basic "Username and Password are required"; 
+      auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+    }
+    
+Edit the shiny server configuration: 
+
+    sudo nano /etc/shiny-server/shiny-server.conf
+    
+File should have at least the following:
+
+    server{
+    listen 3838 127.0.0.1;
+    location / {
+    site_dir /srv/shiny-server;
+    log_dir /var/log/shiny-server;
+    directory_index on;
+    }
+    }
+    
+Add users/passwords with the htpasswd utility from apache2-utils:
+
+    cd /etc/nginx
+    sudo htpasswd -c /etc/nginx/.htpasswd exampleuser
