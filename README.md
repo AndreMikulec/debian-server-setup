@@ -489,7 +489,7 @@ Create the file `transport` with the following lines, specifying SMTP relay in e
     ufl.edu      :
     .ufl.edu     :
     # External delivery.
-    *                smtp:[virtual-smtp-prod01.osg.ufl.edu]
+    *                smtp:[smtp.ufl.edu]
 
 After editing the `transport` file, always check it with the command:
 
