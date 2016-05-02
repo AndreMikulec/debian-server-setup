@@ -23,6 +23,7 @@
 - [Other stuff](#other)
 	- [Apache2 configuration](#apache)
 	- [nginx install and configuration](#nginx)
+	- [postfix configuration](#postfix)
 
 <a name="os"></a>
 #### Operating system (Debian 8 Jessie) install
@@ -474,3 +475,26 @@ Add users/passwords with the htpasswd utility from apache2-utils:
 
     cd /etc/nginx
     sudo htpasswd -c /etc/nginx/.htpasswd exampleuser
+    
+<a name="postfix"></a>
+##### *Postfix configuration*
+
+Postfix was installed with GitLab. As the server is behind a firewall, changes were made to the default configuration, following the instructions [here](http://www.postfix.org/STANDARD_CONFIGURATION_README.html#intranet).
+
+Add the line `transport_maps = hash:/etc/postfix/transport` to `/etc/postfix/main.cf`.
+
+Create the file `transport` with the following lines, specifying SMTP relay in external delivery:
+
+    # Internal delivery.
+    ufl.edu      :
+    .ufl.edu     :
+    # External delivery.
+    *                smtp:[virtual-smtp-prod01.osg.ufl.edu]
+
+After editing the `transport` file, always check it with the command:
+
+    postmap /etc/postfix/transport
+
+
+
+
