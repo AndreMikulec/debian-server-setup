@@ -90,9 +90,9 @@ Network folders can be mounted using the following commands:
     sudo mount.cifs //ifs-flrec-1mps/data/Users/dbucklin /mnt/dbucklin -o credentials=/path/to/file,uid=user1,gid=user1
     sudo mount.cifs //ifs-flrec-1mps/data/Groups/basille_lab /mnt/basille_lab -o credentials=/path/to/file,uid=user1,gid=user1
 
-To load network folder for the lab on computer startup, add the following line to `/etc/fstab`:
+To load network folder for the lab on computer startup, add the following line to `/etc/fstab` (Note that permissions are restricted to only the user marked in `uid=` through the use of `dir_mode=0700`:
 
-    //ifs-flrec-1mps/data/Groups/basille_lab /mnt/basille_lab cifs credentials=/path/to/file,uid=user1 0 0
+    //ifs-flrec-1mps/data/Groups/basille_lab /mnt/basille_lab cifs credentials=/path/to/file,uid=user1,rw,dir_mode=0700 0 0
 
 <a name="psql"></a>
 #### Install PostgreSQL and related software
