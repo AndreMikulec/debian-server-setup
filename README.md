@@ -20,6 +20,7 @@
 - [Install git and related software](#git)
 	- [Install git](#git1)
 	- [Install gitlab](#git2)
+	- [Upgrading gitlab](#git3)
 - [Other stuff](#other)
 	- [Apache2 configuration](#apache)
 	- [nginx install and configuration](#nginx)
@@ -391,6 +392,21 @@ Now enable the site and restart apache2:
     sudo service apache2 restart
     
 The gitlab site can be accessed [here](http://basille-flrec.ad.ufl.edu:4554//users/sign_in).
+
+<a name="git3"></a>
+##### *Upgrading GitLab*
+
+Allow gitlab to be upgraded using apt-get by adding the package repository to your system (more info [here](https://about.gitlab.com/upgrade-to-package-repository/)):
+
+```
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+```
+
+Upgrades can now be done as any other package: 
+
+```
+sudo apt-get install gitlab-ce
+```
 
 <a name="other"></a>
 #### Other stuff
